@@ -1,10 +1,30 @@
+// Import the functions you need from the SDKs you need
 
-var oneTimeNumber = 0;
-if (oneTimeNumber === 0) {
-  var allLocation = [];
-  oneTimeNumber = oneTimeNumber + 1;
-}
-console.log(oneTimeNumber);
+const firebase = require("firebase");
+// Required for side-effects
+require("firebase/firestore");
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+
+// TODO: Replace with your app's Firebase project configuration
+
+// Get a reference to the database service
+var database = firebase.database();
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBb8EjvqYwTSHHmE8kkld-hjWDa7AcOcNk",
+  authDomain: "weatherapptwo.firebaseapp.com",
+  projectId: "weatherapptwo",
+  storageBucket: "weatherapptwo.appspot.com",
+  messagingSenderId: "626928376740",
+  appId: "1:626928376740:web:b75c2c5e637f54151f7f31"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
 const key = "5ea545d6d1b049d3a1d115918222805";
 const apiBaseUrl = 'https://api.weatherapi.com/v1';
 
@@ -26,6 +46,7 @@ const getWeather = async (city) => {
   document.getElementById('humidity').innerHTML = 'Humidity: ' + response.current.humidity + ' %';
   document.getElementById('windspeed').innerHTML = 'Wind speed: ' + response.current.wind_kph + ' km/h';
   document.getElementById('flagimg').src = 'https://countryflagsapi.com/png/' + response.location.country;
+  console.log(response);
 
   if (response.current.condition.text === 'Sunny' || response.current.condition.text === 'Clear' && response.current.is_day === 1) {
     document.getElementById('card').style.backgroundImage = "url('day.jpg')";
@@ -46,6 +67,7 @@ const getPhotoRef = async (photoCity) => {
   const response = await fetch(photoRefFetch, {
     mode: 'no-cors' // 'cors' by default
   })
+  console.log(response);
   //const photoref = (photoResponse.candidates[0].photos[0].photo_reference);
   getPhoto(photoref);
 }
@@ -70,20 +92,18 @@ for (let i = 0; i < cities.length; i++) {
   document.getElementById('selectedcity').innerHTML += '<option value="' + cities[i] + '">' + cities[i] + '</option>';
 }
 
-
 navigator.geolocation.getCurrentPosition(success, error);
 
 function success(position) {
   var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
   var MAPS = 'https://maps.googleapis.com/maps/api/place/photo?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
 
+
   $.getJSON(GEOCODING).done(function (location) {
     const tryWeather = getWeather(location.results[8].formatted_address);
   })
 
 }
-
-
 
 function error(err) {
   const tryWeather = getWeather('Adana');
