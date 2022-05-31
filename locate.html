@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        navigator.geolocation.getCurrentPosition(success, error);
+
+        function success(position) {
+            console.log(position.coords.latitude)
+            console.log(position.coords.longitude)
+            https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY
+
+            var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
+
+            $.getJSON(GEOCODING).done(function (location) {
+                console.log(location.results)
+            })
+
+        }
+
+        function error(err) {
+            console.log(err)
+        }
+        function createPhotoMarker(place) {
+            var photos = place.photos;
+            if (!photos) {
+                return;
+            }
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: place.geometry.location,
+                title: place.name,
+                icon: photos[0].getUrl({ maxWidth: 35, maxHeight: 35 })
+            });
+        }
+    </script>
+</body>
+
+</html>
