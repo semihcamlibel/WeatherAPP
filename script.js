@@ -1,30 +1,3 @@
-// Import the functions you need from the SDKs you need
-
-const firebase = require("firebase");
-// Required for side-effects
-require("firebase/firestore");
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-
-// TODO: Replace with your app's Firebase project configuration
-
-// Get a reference to the database service
-var database = firebase.database();
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBb8EjvqYwTSHHmE8kkld-hjWDa7AcOcNk",
-  authDomain: "weatherapptwo.firebaseapp.com",
-  projectId: "weatherapptwo",
-  storageBucket: "weatherapptwo.appspot.com",
-  messagingSenderId: "626928376740",
-  appId: "1:626928376740:web:b75c2c5e637f54151f7f31"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
 const key = "5ea545d6d1b049d3a1d115918222805";
 const apiBaseUrl = 'https://api.weatherapi.com/v1';
 
@@ -32,7 +5,6 @@ const getWeather = async (city) => {
   const weatherEndPoint = '/current.json';
   const requestParams = `?key=${key}&q=${city}&aqi=yes`;
   const urlToFetch = apiBaseUrl + weatherEndPoint + requestParams;
-
   const response = await fetch(urlToFetch)
     .then((data) => data.json())
     .catch((error) => console.log(error));
@@ -47,13 +19,15 @@ const getWeather = async (city) => {
   document.getElementById('windspeed').innerHTML = 'Wind speed: ' + response.current.wind_kph + ' km/h';
   document.getElementById('flagimg').src = 'https://countryflagsapi.com/png/' + response.location.country;
   console.log(response);
-
-  if (response.current.condition.text === 'Sunny' || response.current.condition.text === 'Clear' && response.current.is_day === 1) {
+  console.log(response.current.condition.text.includes('rain'));
+  if (response.current.condition.text === 'Sunny' && response.current.is_day === 1) {
     document.getElementById('card').style.backgroundImage = "url('day.jpg')";
-  } else if (response.current.condition.text === 'Partly cloudy') {
+  } else if (response.current.condition.text.includes('cloudy') === true) {
     document.getElementById('card').style.backgroundImage = "url('cloud.jpg')";
-  } else if (response.current.condition.text.indexOf('rain')) {
+  } else if (response.current.condition.text.includes('rain') === true) {
     document.getElementById('card').style.backgroundImage = "url('rain.jpg')";
+  } else if (response.current.condition.text === 'Clear' || response.current.condition.text === 'Overcast' && response.current.is_day === 1) {
+    document.getElementById('card').style.backgroundImage = "url('day.jpg')";
   } else {
     document.getElementById('card').style.backgroundImage = "url('night.jpg')";
   }
@@ -100,7 +74,7 @@ function success(position) {
 
 
   $.getJSON(GEOCODING).done(function (location) {
-    const tryWeather = getWeather(location.results[8].formatted_address);
+    getWeather(location.results[8].formatted_address);
   })
 
 }

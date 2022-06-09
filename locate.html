@@ -19,7 +19,7 @@
             var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
 
             $.getJSON(GEOCODING).done(function (location) {
-                console.log(location.results)
+                console.log(location.results[8].formatted_address)
             })
 
         }
