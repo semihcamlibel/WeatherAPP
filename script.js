@@ -1,5 +1,6 @@
 const key = "5ea545d6d1b049d3a1d115918222805";
 const apiBaseUrl = 'https://api.weatherapi.com/v1';
+const googleKey = 'AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
 
 const getWeather = async (city) => {
   const weatherEndPoint = '/current.json';
@@ -8,18 +9,30 @@ const getWeather = async (city) => {
   const response = await fetch(urlToFetch)
     .then((data) => data.json())
     .catch((error) => console.log(error));
-  console.log(response.location.name);
-  document.getElementById('localtime').innerHTML = 'Local Time in ' + response.location.name + '<br>' + ' ' + response.location.localtime;
-  document.getElementById('degree').innerHTML = response.current.temp_c + '°';
-  document.getElementById('location').innerHTML = response.location.name;
-  document.getElementById('conditions').innerHTML = response.current.condition.text;
-  document.getElementById('condimg').src = 'https:' + response.current.condition.icon;
-  document.getElementById('country').innerHTML = response.location.country;
-  document.getElementById('humidity').innerHTML = 'Humidity: ' + response.current.humidity + ' %';
-  document.getElementById('windspeed').innerHTML = 'Wind speed: ' + response.current.wind_kph + ' km/h';
-  document.getElementById('flagimg').src = 'https://countryflagsapi.com/png/' + response.location.country;
-  console.log(response);
-  console.log(response.current.condition.text.includes('rain'));
+  const {
+    location: { localtime: localtime },
+    current: { temp_c: degree },
+    location: { name: cityName },
+    location: { country: countryName },
+    current: { humidity: humidity },
+    current: { wind_kph: windSpeed },
+  } = response;
+
+  const {
+    condition: { text: condText },
+    condition: { icon: condIcon },
+
+  } = response.current;
+
+  document.getElementById('localtime').innerHTML = 'Local Time in ' + cityName + '<br>' + ' ' + localtime;
+  document.getElementById('degree').innerHTML = degree + '°';
+  document.getElementById('location').innerHTML = cityName;
+  document.getElementById('conditions').innerHTML = condText;
+  document.getElementById('condimg').src = 'https:' + condIcon;
+  document.getElementById('country').innerHTML = countryName;
+  document.getElementById('humidity').innerHTML = 'Humidity: ' + humidity + ' %';
+  document.getElementById('windspeed').innerHTML = 'Wind speed: ' + windSpeed + ' km/h';
+  document.getElementById('flagimg').src = 'https://countryflagsapi.com/png/' + countryName;
   if (response.current.condition.text === 'Sunny' && response.current.is_day === 1) {
     document.getElementById('card').style.backgroundImage = "url('day.jpg')";
   } else if (response.current.condition.text.includes('cloudy') === true) {
@@ -37,17 +50,15 @@ const getWeather = async (city) => {
 };
 
 const getPhotoRef = async (photoCity) => {
-  const photoRefFetch = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=' + photoCity + ',%20IL&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE&inputtype=textquery&fields=name,photos'
+  const photoRefFetch = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=' + photoCity + ',%20IL&key=' + googleKey + '&inputtype=textquery&fields=name,photos'
   const response = await fetch(photoRefFetch, {
-    mode: 'no-cors' // 'cors' by default
   })
-  console.log(response);
   //const photoref = (photoResponse.candidates[0].photos[0].photo_reference);
   getPhoto(photoref);
 }
 
 const getPhoto = async (photoref) => {
-  const photoFetch = 'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + photoref + '&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE&maxwidth=1920&maxheight=1080';
+  const photoFetch = 'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + photoref + '&key=' + googleKey + '&maxwidth=1920&maxheight=1080';
   document.body.style.backgroundImage = "url(" + photoFetch + ")";
 }
 
@@ -62,14 +73,15 @@ const getSelectedWeather = () => {
 const cities = ["Adana", "Adıyaman", "Afyon", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydin", "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Isparta", "İçel (Mersin)", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Mugla", "Muş", "Nevşehir", "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Sirnak", "Bartin", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Duzce"
 ];
 
-document.getElementById('selectedcity').innerHTML += '<option value="' + ...cities + '">' + ...cities + '</option>';
-
+for (let i = 0; i < cities.length; i++) {
+  document.getElementById('selectedcity').innerHTML += '<option value="' + cities[i] + '">' + cities[i] + '</option>';
+}
 
 navigator.geolocation.getCurrentPosition(success, error);
 
 function success(position) {
-  var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
-  var MAPS = 'https://maps.googleapis.com/maps/api/place/photo?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
+  var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=' + googleKey + '';
+  var MAPS = 'https://maps.googleapis.com/maps/api/place/photo?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en,+CA&key=' + googleKey + '';
 
 
   $.getJSON(GEOCODING).done(function (location) {
