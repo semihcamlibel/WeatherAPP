@@ -1,10 +1,10 @@
 // const opencageKey = 'c780dc47c66c42b2bffc687e9fb62a6d';
-const weatherApiKey = "5ea545d6d1b049d3a1d115918222805";
+const weatherApiKey = "";
 const geoCodingBaseUrl = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=';
 const mapsBaseUrl = 'https://maps.googleapis.com/maps/api/place/photo?latlng=';
 const placeBaseUrl = 'https://maps.googleapis.com/maps/api/place/';
 const weatherApiBaseUrl = 'https://api.weatherapi.com/v1';
-const googleKey = 'AIzaSyCWThpogVzskhqv5em8s5lS1D9w2rNNquE';
+const googleKey = '';
 
 
 //user location
